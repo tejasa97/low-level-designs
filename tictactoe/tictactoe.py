@@ -6,11 +6,31 @@ class TicTacToe():
         ...
     
     def __init__(self, board_size):
-        
+        """Inits a Tic Tac Toe board with `board_size` dimensions (square)
+
+        :param board_size: dimensions
+        :type board_size: int
+        """
         self.n = board_size
         self.board = [[0 for i in range(self.n)] for i in range(self.n)]
+        self.row_sum = [0 for i in range(self.n)]
+        self.col_sum = [0 for i in range(self.n)]
+        self.diag_sum = 0
+        self.rev_diag_sum = 0
         
     def move(self, player:int, row:int, col:int):
+        """Makes a move for a player
+
+        :param player: 0 or 1
+        :type player: int
+        :param row: row idx of move
+        :type row: int
+        :param col: col idx of move
+        :type col: int
+        :raises self.IllegalArgumentException: raised for several exceptions
+        :return: -1, 0, 1
+        :rtype: int
+        """
         
         if row < 0  or col < 0 or row >= self.n or col >= self.n :
             raise self.IllegalArgumentException("Move out of board boundary!")
@@ -21,19 +41,16 @@ class TicTacToe():
         
         player = -1 if player is 0 else 1        
         self.board[row][col] = player
-        winRow, winCol, winDiag, winRevDiag = True, True, True, True
         
-        for i in range(self.n):
-            if self.board[row][i] != player:
-                winRow = False
-            if self.board[i][col] != player:
-                winCol = False
-            if self.board[i][i] != player:
-                winDiag = False
-            if self.board[i][self.n-1-i] != player:
-                winRevDiag = False
+        self.row_sum[row] += player
+        self.col_sum[col] += player
         
-        if winCol or winRow or winDiag or winRevDiag:
+        if row == col:
+            self.diag_sum += player
+        if row == self.n - 1 - col:
+            self.rev_diag_sum += player
+        
+        if abs(self.row_sum[row]) == self.n or abs(self.col_sum[col]) == self.n or abs(self.diag_sum) == self.n or abs(self.rev_diag_sum) == self.n:
             return player
         
         return 0
